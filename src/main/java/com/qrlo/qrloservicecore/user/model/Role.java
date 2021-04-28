@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.auth.model;
+package com.qrlo.qrloservicecore.user.model;
 
 /**
  * @author rostradamus <rolee0429@gmail.com>

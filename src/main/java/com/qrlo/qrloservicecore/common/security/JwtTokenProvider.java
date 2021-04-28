@@ -1,11 +1,16 @@
 package com.qrlo.qrloservicecore.common.security;
 
-import com.qrlo.qrloservicecore.auth.model.User;
+import com.qrlo.qrloservicecore.user.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -15,14 +20,16 @@ import java.security.cert.X509Certificate;
 import java.sql.Date;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author rostradamus <rolee0429@gmail.com>
  * @date 2021-04-21
  */
 @Component
-public final class JwtUtil {
+public final class JwtTokenProvider {
     private final String keyStoreFilePath;
     private final String keyStorePassword;
     private final String keyAlias;
@@ -32,7 +39,7 @@ public final class JwtUtil {
     private PrivateKey privateKey;
     private X509Certificate certificate;
 
-    public JwtUtil(
+    public JwtTokenProvider(
             @Value("${qrlo.security.keystore.file}") String keyStoreFilePath,
             @Value("${qrlo.security.keystore.password}") String keyStorePassword,
             @Value("${qrlo.security.jwt.alias}") String keyAlias,
@@ -56,8 +63,25 @@ public final class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(certificate.getPublicKey()).build().parseClaimsJws(token).getBody();
     }
 
-    public Long getUserIdFromToken(String token) {
-        return Long.valueOf(getAllClaimsFromToken(token).getSubject());
+    public String getUserIdFromToken(String token) {
+        return getAllClaimsFromToken(token).getSubject();
+    }
+
+    public String generateToken(User user, UUID jti) {
+        Map<String, Object> claims = Map.of(
+                "roles", user.getRoles()
+        );
+        final Instant now = Instant.now();
+        return Jwts.builder()
+                .setIssuer("qrlo-service-core")
+                .setId(jti.toString())
+                .setSubject(user.getId())
+                .setIssuedAt(Date.from(now))
+                .setNotBefore(Date.from(now))
+                .setExpiration(Date.from(now.plus(Duration.parse(duration))))
+                .addClaims(claims)
+                .signWith(privateKey)
+                .compact();
     }
 
     public String generateToken(User user) {
@@ -67,12 +91,37 @@ public final class JwtUtil {
         final Instant now = Instant.now();
         return Jwts.builder()
                 .setIssuer("qrlo-service-core")
-                .setSubject(user.getId().toString())
+                .setId(UUID.randomUUID().toString())
+                .setSubject(user.getId())
                 .setIssuedAt(Date.from(now))
                 .setNotBefore(Date.from(now))
                 .setExpiration(Date.from(now.plus(Duration.parse(duration))))
                 .addClaims(claims)
                 .signWith(privateKey)
                 .compact();
+    }
+
+    public Mono<String> generateTokenMono(User user) {
+        Map<String, Object> claims = Map.of(
+                "roles", user.getRoles()
+        );
+        final Instant now = Instant.now();
+        return Mono.just(Jwts.builder()
+                .setIssuer("qrlo-service-core")
+                .setId(UUID.randomUUID().toString())
+                .setSubject(user.getId())
+                .setIssuedAt(Date.from(now))
+                .setNotBefore(Date.from(now))
+                .setExpiration(Date.from(now.plus(Duration.parse(duration))))
+                .addClaims(claims)
+                .signWith(privateKey)
+                .compact());
+    }
+
+    public Authentication getAuthentication(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+        User user = User.builder().id(claims.getSubject()).build();
+        List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(claims.get("roles").toString());
+        return new UsernamePasswordAuthenticationToken(user, token, authorities);
     }
 }

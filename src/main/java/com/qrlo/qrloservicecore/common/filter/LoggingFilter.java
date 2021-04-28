@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.common.config;
+package com.qrlo.qrloservicecore.common.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
@@ -47,7 +47,7 @@ public class LoggingFilter implements WebFilter {
                     try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                         Channels.newChannel(byteArrayOutputStream).write(dataBuffer.asByteBuffer().asReadOnlyBuffer());
                         requestBody = byteArrayOutputStream.toString(StandardCharsets.UTF_8);
-                        log.debug("Log Request: {}", requestBody);
+                        log.info("Log Request: {}", requestBody);
                     } catch (IOException e) {
                         log.error("Something Bad Happened {}", requestBody, e);
                     }
@@ -64,7 +64,7 @@ public class LoggingFilter implements WebFilter {
                     try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                         Channels.newChannel(byteArrayOutputStream).write(dataBuffer.asByteBuffer().asReadOnlyBuffer());
                         responseBody = byteArrayOutputStream.toString(StandardCharsets.UTF_8);
-                        log.debug("Log Response: {}", responseBody);
+                        log.info("Log Response: {}", responseBody);
                     } catch (Exception e) {
                         log.error("Something Bad Happened {}", responseBody, e);
                     }

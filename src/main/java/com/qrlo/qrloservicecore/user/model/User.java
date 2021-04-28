@@ -1,6 +1,9 @@
-package com.qrlo.qrloservicecore.auth.model;
+package com.qrlo.qrloservicecore.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -22,12 +25,16 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User implements UserDetails {
     @Id
-    private Long id;
+    private String id;
     @Indexed(unique = true)
     private String email;
+    @JsonIgnore
     private List<OAuth> oAuths;
+    @JsonIgnore
     private List<Role> roles;
 
     /**
