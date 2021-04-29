@@ -1,6 +1,5 @@
-package com.qrlo.qrloservicecore.user.router;
+package com.qrlo.qrloservicecore.user.auth;
 
-import com.qrlo.qrloservicecore.user.handler.AuthHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -18,10 +17,9 @@ public class AuthRouter {
     @Bean
     public RouterFunction<ServerResponse> authRoutes(AuthHandler authHandler) {
         return RouterFunctions
-                .route(RequestPredicates.POST("/auth").and(RequestPredicates.accept(MediaType.APPLICATION_JSON))
-                        , authHandler::authenticate);
-//                .andRoute(RequestPredicates.DELETE("/auth"), authHandler::logOut)
-//                .andNest(RequestPredicates.path("/auth"), RouterFunctions
-//                        .route(RequestPredicates.POST("/refresh-token"), authHandler::refreshToken));
+                .route(RequestPredicates.POST("/auth")
+                        .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), authHandler::authenticate)
+                .andNest(RequestPredicates.path("/auth"), RouterFunctions
+                        .route(RequestPredicates.POST("/integrate"), authHandler::integrateOAuth));
     }
 }

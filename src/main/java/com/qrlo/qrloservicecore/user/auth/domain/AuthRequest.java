@@ -1,21 +1,17 @@
-package com.qrlo.qrloservicecore.user.handler.domain;
+package com.qrlo.qrloservicecore.user.auth.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.qrlo.qrloservicecore.user.model.OAuthType;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
  * @author rostradamus <rolee0429@gmail.com>
  * @date 2021-04-22
  */
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
-@ToString
 @JsonInclude
 public class AuthRequest {
     @JsonProperty(required = true)

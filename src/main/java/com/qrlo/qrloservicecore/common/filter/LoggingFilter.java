@@ -35,9 +35,6 @@ public class LoggingFilter implements WebFilter {
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        ServerHttpRequest httpRequest = exchange.getRequest();
-        final String httpUrl = httpRequest.getURI().toString();
-
         ServerHttpRequestDecorator loggingServerHttpRequestDecorator = new ServerHttpRequestDecorator(exchange.getRequest()) {
             String requestBody = "";
 
@@ -47,6 +44,7 @@ public class LoggingFilter implements WebFilter {
                     try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                         Channels.newChannel(byteArrayOutputStream).write(dataBuffer.asByteBuffer().asReadOnlyBuffer());
                         requestBody = byteArrayOutputStream.toString(StandardCharsets.UTF_8);
+                        log.info("Log Request URL: {}", exchange.getRequest().getURI());
                         log.info("Log Request: {}", requestBody);
                     } catch (IOException e) {
                         log.error("Something Bad Happened {}", requestBody, e);

@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.user.repository;
+package com.qrlo.qrloservicecore.user;
 
 import com.qrlo.qrloservicecore.user.model.OAuth;
 import com.qrlo.qrloservicecore.user.model.User;

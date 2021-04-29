@@ -1,6 +1,5 @@
 package com.qrlo.qrloservicecore.common.filter;
 
-import com.qrlo.qrloservicecore.user.model.User;
 import com.qrlo.qrloservicecore.common.security.JwtTokenProvider;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;

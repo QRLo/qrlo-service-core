@@ -1,7 +1,7 @@
 package com.qrlo.qrloservicecore.user.client;
 
 import com.qrlo.qrloservicecore.user.client.domain.KakaoAccessTokenInfoResponse;
-import com.qrlo.qrloservicecore.user.exception.InvalidOAuthException;
+import com.qrlo.qrloservicecore.user.client.exception.OAuthVerificationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -35,7 +35,7 @@ public class KakaoOAuthClient {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=utf-8")
                 .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", accessToken))
                 .retrieve()
-                .onStatus(HttpStatus::isError, response -> Mono.error(new InvalidOAuthException("Failed to verify OAuth Access Token")))
+                .onStatus(HttpStatus::isError, response -> Mono.error(new OAuthVerificationException()))
                 .bodyToMono(KakaoAccessTokenInfoResponse.class);
     }
 
