@@ -1,10 +1,10 @@
-package com.qrlo.qrloservicecore.user.service;
+package com.qrlo.qrloservicecore.user;
 
 import com.qrlo.qrloservicecore.user.model.OAuth;
 import com.qrlo.qrloservicecore.user.model.Role;
 import com.qrlo.qrloservicecore.user.model.User;
-import com.qrlo.qrloservicecore.user.repository.UserRepository;
-import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -15,14 +15,12 @@ import java.util.List;
  * @date 2021-04-22
  */
 @Service
-public class UserService {
+public class UserService implements ReactiveUserDetailsService {
     private static final String MOCK_USER_EMAIL = "test@example.com";
     private final UserRepository userRepository;
-    private final ReactiveMongoTemplate mongoTemplate;
 
-    public UserService(UserRepository userRepository, ReactiveMongoTemplate mongoTemplate) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.mongoTemplate = mongoTemplate;
     }
 
     public Mono<User> findById(String id) {
@@ -31,6 +29,10 @@ public class UserService {
 
     public Mono<User> findByOAuth(OAuth oAuth) {
         return userRepository.findByOAuth(oAuth);
+    }
+
+    public Mono<User> saveUser(User user) {
+        return userRepository.save(user);
     }
 
     public Mono<User> findByOAuthOrInsert(OAuth oAuth) {
@@ -42,5 +44,16 @@ public class UserService {
                     .build();
             return userRepository.save(newUser);
         }));
+    }
+
+    /**
+     * Find the {@link UserDetails} by username.
+     *
+     * @param username the username to look up
+     * @return the {@link UserDetails}. Cannot be null
+     */
+    @Override
+    public Mono<UserDetails> findByUsername(String username) {
+        return userRepository.findByEmail(username).cast(UserDetails.class);
     }
 }

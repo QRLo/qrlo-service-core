@@ -1,6 +1,6 @@
-package com.qrlo.qrloservicecore.user.handler;
+package com.qrlo.qrloservicecore.user.profile;
 
-import com.qrlo.qrloservicecore.user.service.UserService;
+import com.qrlo.qrloservicecore.user.UserService;
 import com.qrlo.qrloservicecore.user.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -29,7 +29,8 @@ public class ProfileHandler {
                 .ofType(UsernamePasswordAuthenticationToken.class)
                 .map(UsernamePasswordAuthenticationToken::getPrincipal)
                 .ofType(User.class)
-                .flatMap(user -> userService.findById(user.getId()))
+                .map(User::getId)
+                .flatMap(userService::findById)
                 .flatMap(user -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(user), User.class));
     }
 }
