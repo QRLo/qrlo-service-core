@@ -1,7 +1,7 @@
 package com.qrlo.qrloservicecore.common.filter;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.qrlo.qrloservicecore.common.security.JwtTokenProvider;
-import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -38,10 +38,11 @@ public class JwtAuthenticationFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String token = resolveToken(exchange.getRequest());
         if (!StringUtils.hasText(token)) return chain.filter(exchange);
+
         try {
             Authentication authentication = tokenProvider.getAuthentication(token);
             return chain.filter(exchange).contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
-        } catch (JwtException e) {
+        } catch (JWTVerificationException e) {
             return chain.filter(exchange);
         }
     }
