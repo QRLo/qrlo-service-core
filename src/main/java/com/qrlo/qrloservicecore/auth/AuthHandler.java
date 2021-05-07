@@ -1,10 +1,10 @@
-package com.qrlo.qrloservicecore.user.auth;
+package com.qrlo.qrloservicecore.auth;
 
 import com.qrlo.qrloservicecore.common.security.JwtTokenProvider;
 import com.qrlo.qrloservicecore.user.UserService;
-import com.qrlo.qrloservicecore.user.auth.domain.AuthRequest;
-import com.qrlo.qrloservicecore.user.auth.domain.AuthResponse;
-import com.qrlo.qrloservicecore.user.auth.domain.OAuthIntegrationRequest;
+import com.qrlo.qrloservicecore.auth.domain.AuthRequest;
+import com.qrlo.qrloservicecore.auth.domain.AuthResponse;
+import com.qrlo.qrloservicecore.auth.domain.OAuthIntegrationRequest;
 import com.qrlo.qrloservicecore.user.client.KakaoOAuthClient;
 import com.qrlo.qrloservicecore.user.client.exception.OAuthVerificationException;
 import com.qrlo.qrloservicecore.user.model.OAuth;

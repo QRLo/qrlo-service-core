@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.user.auth;
+package com.qrlo.qrloservicecore.auth;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
