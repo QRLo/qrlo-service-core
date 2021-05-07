@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.health.domain;
+package com.qrlo.qrloservicecore.handler.domain;
 
 /**
  * @author rostradamus <rolee0429@gmail.com>

@@ -1,12 +1,12 @@
-package com.qrlo.qrloservicecore.auth;
+package com.qrlo.qrloservicecore.handler;
 
-import com.qrlo.qrloservicecore.common.security.JwtTokenProvider;
+import com.qrlo.qrloservicecore.security.JwtTokenProvider;
 import com.qrlo.qrloservicecore.service.UserService;
-import com.qrlo.qrloservicecore.auth.domain.AuthRequest;
-import com.qrlo.qrloservicecore.auth.domain.AuthResponse;
-import com.qrlo.qrloservicecore.auth.domain.OAuthIntegrationRequest;
-import com.qrlo.qrloservicecore.client.KakaoOAuthClient;
-import com.qrlo.qrloservicecore.client.exception.OAuthVerificationException;
+import com.qrlo.qrloservicecore.handler.domain.AuthRequest;
+import com.qrlo.qrloservicecore.handler.domain.AuthResponse;
+import com.qrlo.qrloservicecore.handler.domain.OAuthIntegrationRequest;
+import com.qrlo.qrloservicecore.service.KakaoService;
+import com.qrlo.qrloservicecore.service.exception.OAuthVerificationException;
 import com.qrlo.qrloservicecore.model.OAuth;
 import com.qrlo.qrloservicecore.model.Role;
 import com.qrlo.qrloservicecore.model.User;
@@ -29,12 +29,12 @@ import java.util.List;
 @Component
 public class AuthHandler {
     private final JwtTokenProvider jwtTokenProvider;
-    private final KakaoOAuthClient kakaoOAuthClient;
+    private final KakaoService kakaoService;
     private final UserService userService;
 
-    public AuthHandler(JwtTokenProvider jwtTokenProvider, KakaoOAuthClient kakaoOAuthClient, UserService userService) {
+    public AuthHandler(JwtTokenProvider jwtTokenProvider, KakaoService kakaoService, UserService userService) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.kakaoOAuthClient = kakaoOAuthClient;
+        this.kakaoService = kakaoService;
         this.userService = userService;
     }
 
@@ -45,7 +45,7 @@ public class AuthHandler {
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED))));
         return authRequestMono
                 .map(AuthRequest::getOAuthAccessToken)
-                .flatMap(kakaoOAuthClient::verifyAccessToken)
+                .flatMap(kakaoService::verifyAccessToken)
                 .zipWith(authRequestMono, (kakaoAccessTokenInfoResponse, authRequest) ->
                         new OAuth(authRequest.getOAuthType(), kakaoAccessTokenInfoResponse.getId().toString()))
                 .flatMap(userService::findByOAuth)
@@ -64,7 +64,7 @@ public class AuthHandler {
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST))));
         return oAuthIntegrationRequestMono
                 .map(OAuthIntegrationRequest::getOAuthAccessToken)
-                .flatMap(kakaoOAuthClient::verifyAccessToken)
+                .flatMap(kakaoService::verifyAccessToken)
                 .zipWith(oAuthIntegrationRequestMono, (kakaoAccessTokenInfoResponse, oAuthIntegrationRequest) ->
                         new OAuth(oAuthIntegrationRequest.getOAuthType(), kakaoAccessTokenInfoResponse.getId().toString()))
                 .zipWith(oAuthIntegrationRequestMono, (oAuth, oAuthIntegrationRequest) ->

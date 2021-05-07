@@ -1,7 +1,7 @@
-package com.qrlo.qrloservicecore.health;
+package com.qrlo.qrloservicecore.handler;
 
-import com.qrlo.qrloservicecore.health.domain.HealthCheckResponse;
-import com.qrlo.qrloservicecore.health.domain.HealthStatus;
+import com.qrlo.qrloservicecore.handler.domain.HealthCheckResponse;
+import com.qrlo.qrloservicecore.handler.domain.HealthStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;

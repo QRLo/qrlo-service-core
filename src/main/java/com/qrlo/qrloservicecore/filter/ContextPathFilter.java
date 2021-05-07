@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.common.filter;
+package com.qrlo.qrloservicecore.filter;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

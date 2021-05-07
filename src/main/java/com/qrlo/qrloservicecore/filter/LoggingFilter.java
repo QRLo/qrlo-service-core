@@ -1,10 +1,9 @@
-package com.qrlo.qrloservicecore.common.filter;
+package com.qrlo.qrloservicecore.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import org.springframework.web.server.ServerWebExchange;
