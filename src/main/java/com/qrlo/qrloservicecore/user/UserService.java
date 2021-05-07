@@ -1,6 +1,6 @@
 package com.qrlo.qrloservicecore.user;
 
-import com.qrlo.qrloservicecore.user.auth.domain.OAuthIntegrationRequest;
+import com.qrlo.qrloservicecore.auth.domain.OAuthIntegrationRequest;
 import com.qrlo.qrloservicecore.user.model.OAuth;
 import com.qrlo.qrloservicecore.user.model.Role;
 import com.qrlo.qrloservicecore.user.model.User;
@@ -42,19 +42,7 @@ public class UserService implements ReactiveUserDetailsService {
     }
 
     public Mono<User> saveUser(User user) {
-
         return userRepository.save(user);
-    }
-
-    public Mono<User> findByOAuthOrInsert(OAuth oAuth) {
-        return userRepository.findByOAuth(oAuth).switchIfEmpty(Mono.defer(() -> {
-            User newUser = User.builder()
-                    .email(MOCK_USER_EMAIL)
-                    .roles(List.of(Role.ROLE_USER))
-                    .oAuths(List.of(oAuth))
-                    .build();
-            return userRepository.save(newUser);
-        }));
     }
 
     /**
