@@ -1,15 +1,12 @@
-package com.qrlo.qrloservicecore.user;
+package com.qrlo.qrloservicecore.service;
 
-import com.qrlo.qrloservicecore.auth.domain.OAuthIntegrationRequest;
-import com.qrlo.qrloservicecore.user.model.OAuth;
-import com.qrlo.qrloservicecore.user.model.Role;
-import com.qrlo.qrloservicecore.user.model.User;
+import com.qrlo.qrloservicecore.model.OAuth;
+import com.qrlo.qrloservicecore.model.User;
+import com.qrlo.qrloservicecore.repository.UserRepository;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 /**
  * @author rostradamus <rolee0429@gmail.com>
@@ -17,7 +14,6 @@ import java.util.List;
  */
 @Service
 public class UserService implements ReactiveUserDetailsService {
-    private static final String MOCK_USER_EMAIL = "test@example.com";
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
@@ -30,15 +26,6 @@ public class UserService implements ReactiveUserDetailsService {
 
     public Mono<User> findByOAuth(OAuth oAuth) {
         return userRepository.findByOAuth(oAuth);
-    }
-
-    public Mono<User> createUser() {
-        return null;
-    }
-
-    public Mono<User> createUser(OAuth oAuth, OAuthIntegrationRequest oAuthIntegrationRequest) {
-        return Mono.just(User.builder().email(oAuthIntegrationRequest.getEmail()).oAuths(List.of(oAuth)).roles(List.of(Role.ROLE_USER)).build())
-                .flatMap(userRepository::save);
     }
 
     public Mono<User> saveUser(User user) {

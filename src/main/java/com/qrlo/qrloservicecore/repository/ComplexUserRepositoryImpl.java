@@ -1,7 +1,7 @@
-package com.qrlo.qrloservicecore.user;
+package com.qrlo.qrloservicecore.repository;
 
-import com.qrlo.qrloservicecore.user.model.OAuth;
-import com.qrlo.qrloservicecore.user.model.User;
+import com.qrlo.qrloservicecore.model.OAuth;
+import com.qrlo.qrloservicecore.model.User;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

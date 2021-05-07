@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.user.model;
+package com.qrlo.qrloservicecore.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -1,6 +1,6 @@
-package com.qrlo.qrloservicecore.user;
+package com.qrlo.qrloservicecore.repository;
 
-import com.qrlo.qrloservicecore.user.model.User;
+import com.qrlo.qrloservicecore.model.User;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
