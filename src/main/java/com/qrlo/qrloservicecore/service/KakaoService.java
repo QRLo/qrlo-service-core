@@ -1,7 +1,7 @@
-package com.qrlo.qrloservicecore.client;
+package com.qrlo.qrloservicecore.service;
 
-import com.qrlo.qrloservicecore.client.domain.KakaoAccessTokenInfoResponse;
-import com.qrlo.qrloservicecore.client.exception.OAuthVerificationException;
+import com.qrlo.qrloservicecore.service.domain.KakaoAccessTokenInfoResponse;
+import com.qrlo.qrloservicecore.service.exception.OAuthVerificationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -17,14 +17,14 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @Component
-public class KakaoOAuthClient {
+public class KakaoService {
     private static final String BASE_URL = "https://kapi.kakao.com/";
     private static final String ACCESS_TOKEN_INFO_ENDPOINT = "user/access_token_info";
     private final WebClient webClient = WebClient.create(BASE_URL);
 
     private final String kakaoApiVersion;
 
-    public KakaoOAuthClient(@Value("${kakao.oauth.api.version}") String kakaoApiVersion) {
+    public KakaoService(@Value("${kakao.oauth.api.version}") String kakaoApiVersion) {
         this.kakaoApiVersion = kakaoApiVersion;
     }
 

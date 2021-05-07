@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.profile;
+package com.qrlo.qrloservicecore.handler;
 
 import com.qrlo.qrloservicecore.service.UserService;
 import com.qrlo.qrloservicecore.model.User;

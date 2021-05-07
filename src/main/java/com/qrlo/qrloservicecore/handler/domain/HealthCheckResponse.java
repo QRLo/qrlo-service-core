@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.health.domain;
+package com.qrlo.qrloservicecore.handler.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

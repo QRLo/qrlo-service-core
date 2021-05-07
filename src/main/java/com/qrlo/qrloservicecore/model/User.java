@@ -35,7 +35,6 @@ public class User implements UserDetails {
     @Indexed(unique = true)
     private String email;
     private BusinessCardData myBusinessCardData;
-    private List<BusinessCardData> businessCardDataList;
 
     @JsonIgnore
     private List<OAuth> oAuths;

@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.client.exception;
+package com.qrlo.qrloservicecore.service.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;

@@ -1,7 +1,7 @@
-package com.qrlo.qrloservicecore.common.filter;
+package com.qrlo.qrloservicecore.filter;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.qrlo.qrloservicecore.common.security.JwtTokenProvider;
+import com.qrlo.qrloservicecore.security.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;

@@ -1,7 +1,7 @@
-package com.qrlo.qrloservicecore.common.config;
+package com.qrlo.qrloservicecore.config;
 
-import com.qrlo.qrloservicecore.common.filter.JwtAuthenticationFilter;
-import com.qrlo.qrloservicecore.common.security.JwtTokenProvider;
+import com.qrlo.qrloservicecore.filter.JwtAuthenticationFilter;
+import com.qrlo.qrloservicecore.security.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

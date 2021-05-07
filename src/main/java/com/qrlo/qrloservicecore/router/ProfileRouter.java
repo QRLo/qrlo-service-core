@@ -1,5 +1,6 @@
-package com.qrlo.qrloservicecore.profile;
+package com.qrlo.qrloservicecore.router;
 
+import com.qrlo.qrloservicecore.handler.ProfileHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RequestPredicates;
