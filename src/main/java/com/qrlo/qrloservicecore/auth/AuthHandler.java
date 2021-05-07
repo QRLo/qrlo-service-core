@@ -1,15 +1,15 @@
 package com.qrlo.qrloservicecore.auth;
 
 import com.qrlo.qrloservicecore.common.security.JwtTokenProvider;
-import com.qrlo.qrloservicecore.user.UserService;
+import com.qrlo.qrloservicecore.service.UserService;
 import com.qrlo.qrloservicecore.auth.domain.AuthRequest;
 import com.qrlo.qrloservicecore.auth.domain.AuthResponse;
 import com.qrlo.qrloservicecore.auth.domain.OAuthIntegrationRequest;
-import com.qrlo.qrloservicecore.user.client.KakaoOAuthClient;
-import com.qrlo.qrloservicecore.user.client.exception.OAuthVerificationException;
-import com.qrlo.qrloservicecore.user.model.OAuth;
-import com.qrlo.qrloservicecore.user.model.Role;
-import com.qrlo.qrloservicecore.user.model.User;
+import com.qrlo.qrloservicecore.client.KakaoOAuthClient;
+import com.qrlo.qrloservicecore.client.exception.OAuthVerificationException;
+import com.qrlo.qrloservicecore.model.OAuth;
+import com.qrlo.qrloservicecore.model.Role;
+import com.qrlo.qrloservicecore.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

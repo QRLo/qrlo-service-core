@@ -1,7 +1,7 @@
 package com.qrlo.qrloservicecore.profile;
 
-import com.qrlo.qrloservicecore.user.UserService;
-import com.qrlo.qrloservicecore.user.model.User;
+import com.qrlo.qrloservicecore.service.UserService;
+import com.qrlo.qrloservicecore.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

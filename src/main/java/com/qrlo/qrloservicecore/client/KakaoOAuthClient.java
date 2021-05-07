@@ -1,7 +1,7 @@
-package com.qrlo.qrloservicecore.user.client;
+package com.qrlo.qrloservicecore.client;
 
-import com.qrlo.qrloservicecore.user.client.domain.KakaoAccessTokenInfoResponse;
-import com.qrlo.qrloservicecore.user.client.exception.OAuthVerificationException;
+import com.qrlo.qrloservicecore.client.domain.KakaoAccessTokenInfoResponse;
+import com.qrlo.qrloservicecore.client.exception.OAuthVerificationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;

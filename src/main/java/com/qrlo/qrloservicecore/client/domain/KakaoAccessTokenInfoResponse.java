@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.user.client.domain;
+package com.qrlo.qrloservicecore.client.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

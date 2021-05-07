@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.user.model;
+package com.qrlo.qrloservicecore.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
