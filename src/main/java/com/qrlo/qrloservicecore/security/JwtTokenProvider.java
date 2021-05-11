@@ -78,7 +78,7 @@ public final class JwtTokenProvider {
                 .withIssuedAt(Date.from(now))
                 .withNotBefore(Date.from(now))
                 .withExpiresAt(Date.from(now.plus(Duration.parse(duration))))
-                .withClaim("roles", user.getRoles().stream().map(Role::getValue).collect(Collectors.toList()))
+                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(signingAlgorithm);
     }
 
@@ -88,8 +88,7 @@ public final class JwtTokenProvider {
 
     public Authentication getAuthentication(String token) {
         DecodedJWT decodedJWT = verifyJwtToken(token);
-        User user = User.builder().id(decodedJWT.getSubject()).build();
         List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(decodedJWT.getClaim("roles").toString());
-        return new UsernamePasswordAuthenticationToken(user, token, authorities);
+        return new UsernamePasswordAuthenticationToken(decodedJWT.getSubject(), token, authorities);
     }
 }
