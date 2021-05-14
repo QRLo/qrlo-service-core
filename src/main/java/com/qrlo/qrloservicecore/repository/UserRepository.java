@@ -10,6 +10,6 @@ import reactor.core.publisher.Mono;
  * @date 2021-04-21
  */
 @Repository
-public interface UserRepository extends ReactiveMongoRepository<User, String>, ComplexUserRepository {
+public interface UserRepository extends ReactiveMongoRepository<User, String>, CustomUserRepository {
     Mono<User> findByEmail(String email);
 }

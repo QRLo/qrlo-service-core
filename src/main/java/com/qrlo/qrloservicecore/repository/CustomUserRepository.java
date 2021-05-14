@@ -10,6 +10,6 @@ import reactor.core.publisher.Mono;
  * @date 2021-04-22
  */
 @Repository
-public interface ComplexUserRepository {
+public interface CustomUserRepository {
     Mono<User> findByOAuth(OAuth oAuth);
 }

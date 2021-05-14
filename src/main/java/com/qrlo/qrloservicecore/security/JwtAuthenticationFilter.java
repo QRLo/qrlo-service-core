@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.filter;
+package com.qrlo.qrloservicecore.security;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.qrlo.qrloservicecore.security.JwtTokenProvider;

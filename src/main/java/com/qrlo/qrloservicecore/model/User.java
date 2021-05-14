@@ -2,12 +2,15 @@ package com.qrlo.qrloservicecore.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,6 +18,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,14 +38,30 @@ public class User implements UserDetails {
     private String id;
     @Indexed(unique = true)
     private String email;
-    private BusinessCardData myBusinessCardData;
+    private String firstName;
+    private String lastName;
+    private List<BusinessCard> myBusinessCards = new ArrayList<>();
 
-    @JsonIgnore
     private List<OAuth> oAuths;
-    @JsonIgnore
-    private List<Role> roles;
     @CreatedDate
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+    @Version
+    private Long version;
+
+    @JsonProperty("missingProfile")
+    public MissingProfile getMissingProfile() {
+        MissingProfile missingProfile = new MissingProfile();
+        List<String> missingProfiles = missingProfile.getFields();
+        if (firstName == null) {
+            missingProfiles.add("firstName");
+        }
+        if (lastName == null) {
+            missingProfiles.add("lastName");
+        }
+        return missingProfile;
+    }
 
     /**
      * Returns the authorities granted to the user. Cannot return <code>null</code>.
@@ -49,8 +69,9 @@ public class User implements UserDetails {
      * @return the authorities, sorted by natural key (never <code>null</code>)
      */
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
+        return List.of(new SimpleGrantedAuthority(Role.ROLE_USER.getValue()));
     }
 
     /**
@@ -59,6 +80,7 @@ public class User implements UserDetails {
      * @return the password
      */
     @Override
+    @JsonIgnore
     public String getPassword() {
         return null;
     }
@@ -70,6 +92,7 @@ public class User implements UserDetails {
      * @return the username (never <code>null</code>)
      */
     @Override
+    @JsonIgnore
     public String getUsername() {
         return email;
     }
@@ -82,6 +105,7 @@ public class User implements UserDetails {
      * <code>false</code> if no longer valid (ie expired)
      */
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return false;
     }
@@ -93,6 +117,7 @@ public class User implements UserDetails {
      * @return <code>true</code> if the user is not locked, <code>false</code> otherwise
      */
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return false;
     }
@@ -105,6 +130,7 @@ public class User implements UserDetails {
      * <code>false</code> if no longer valid (ie expired)
      */
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return false;
     }
@@ -116,6 +142,7 @@ public class User implements UserDetails {
      * @return <code>true</code> if the user is enabled, <code>false</code> otherwise
      */
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }

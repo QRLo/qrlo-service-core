@@ -13,4 +13,5 @@ import lombok.Getter;
 @JsonInclude
 public class HealthCheckResponse {
     private final HealthStatus status;
+    private final boolean isLoggedIn;
 }

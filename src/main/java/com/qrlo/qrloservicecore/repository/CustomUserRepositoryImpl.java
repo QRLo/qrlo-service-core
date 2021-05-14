@@ -5,6 +5,7 @@ import com.qrlo.qrloservicecore.model.User;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -13,10 +14,10 @@ import reactor.core.publisher.Mono;
  * @date 2021-04-22
  */
 @Component
-public class ComplexUserRepositoryImpl implements ComplexUserRepository {
+public class CustomUserRepositoryImpl implements CustomUserRepository {
     private final ReactiveMongoTemplate template;
 
-    public ComplexUserRepositoryImpl(ReactiveMongoTemplate template) {
+    public CustomUserRepositoryImpl(ReactiveMongoTemplate template) {
         this.template = template;
     }
 
@@ -24,4 +25,6 @@ public class ComplexUserRepositoryImpl implements ComplexUserRepository {
     public Mono<User> findByOAuth(OAuth oAuth) {
         return template.findOne(Query.query(Criteria.where("oAuths").in(oAuth)), User.class);
     }
+
+
 }

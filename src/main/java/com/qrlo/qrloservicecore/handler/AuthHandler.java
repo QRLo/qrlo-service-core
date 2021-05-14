@@ -68,7 +68,7 @@ public class AuthHandler {
                 .zipWith(oAuthIntegrationRequestMono, (kakaoAccessTokenInfoResponse, oAuthIntegrationRequest) ->
                         new OAuth(oAuthIntegrationRequest.getOAuthType(), kakaoAccessTokenInfoResponse.getId().toString()))
                 .zipWith(oAuthIntegrationRequestMono, (oAuth, oAuthIntegrationRequest) ->
-                        User.builder().email(oAuthIntegrationRequest.getEmail()).oAuths(List.of(oAuth)).roles(List.of(Role.ROLE_USER)).build())
+                        User.builder().email(oAuthIntegrationRequest.getEmail()).oAuths(List.of(oAuth)).build())
                 .flatMap(userService::saveUser)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND))))
                 .flatMap(jwtTokenProvider::generateTokenMono)
