@@ -1,12 +1,12 @@
 package com.qrlo.qrloservicecore.handler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qrlo.qrloservicecore.model.BusinessCard;
 import com.qrlo.qrloservicecore.model.User;
 import com.qrlo.qrloservicecore.service.BusinessCardService;
 import com.qrlo.qrloservicecore.service.QrCodeService;
 import com.qrlo.qrloservicecore.service.UserService;
+import com.qrlo.qrloservicecore.service.VCardService;
 import com.qrlo.qrloservicecore.util.RequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -25,11 +25,14 @@ public class ProfileHandler {
     private final UserService userService;
     private final BusinessCardService businessCardService;
     private final QrCodeService qrCodeService;
+    private final VCardService vCardService;
 
-    public ProfileHandler(UserService userService, BusinessCardService businessCardService, QrCodeService qrCodeService) {
+    public ProfileHandler(UserService userService, BusinessCardService businessCardService, QrCodeService qrCodeService,
+                          VCardService vCardService) {
         this.userService = userService;
         this.businessCardService = businessCardService;
         this.qrCodeService = qrCodeService;
+        this.vCardService = vCardService;
     }
 
     public Mono<ServerResponse> getProfile(ServerRequest request) {
@@ -57,8 +60,9 @@ public class ProfileHandler {
         String id = request.pathVariable("id");
         return RequestUtils
                 .getUserIdFromRequest(request)
-                .flatMap(userId -> businessCardService.getUnwoundBusinessCardForUserById(id, userId))
-                .flatMap(unwoundUserBusinessCard -> Mono.fromCallable(() -> new ObjectMapper().writeValueAsString(unwoundUserBusinessCard)))
+                .flatMap(userId -> businessCardService.getBusinessCardForUserById(id, userId))
+                .flatMap(vCardService::generateFromUserBusinessCard)
+                .flatMap(vCardService::writeVCardAsString)
                 .flatMap(qrCodeService::generateQrCode)
                 .flatMap(imageBytes -> ServerResponse.ok().contentType(MediaType.IMAGE_PNG).bodyValue(imageBytes));
     }

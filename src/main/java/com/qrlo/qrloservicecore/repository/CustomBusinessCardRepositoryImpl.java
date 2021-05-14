@@ -1,6 +1,6 @@
 package com.qrlo.qrloservicecore.repository;
 
-import com.qrlo.qrloservicecore.model.UnwoundUserBusinessCard;
+import com.qrlo.qrloservicecore.model.UserBusinessCard;
 import com.qrlo.qrloservicecore.model.User;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -25,10 +25,10 @@ public class CustomBusinessCardRepositoryImpl implements BusinessCardRepository 
     }
 
     @Override
-    public Mono<UnwoundUserBusinessCard> findUnwoundBusinessCardForUserById(String userId, String businessCardId) {
+    public Mono<UserBusinessCard> findUnwoundBusinessCardForUserById(String userId, String businessCardId) {
         MatchOperation userMatch = Aggregation.match(Criteria.where("_id").is(userId));
         ProjectionOperation businessCardProjection = Aggregation.project()
-                .andInclude("firstName", "lastName")
+                .andInclude("firstName", "lastName", "version")
                 .and(context -> {
             Document document = new Document();
             document.put("input", "$myBusinessCards");
@@ -38,13 +38,13 @@ public class CustomBusinessCardRepositoryImpl implements BusinessCardRepository 
         }).as("myBusinessCard");
         UnwindOperation unwindOperation = Aggregation.unwind("myBusinessCard");
         ProjectionOperation finalProjection = Aggregation.project()
-                .andInclude("firstName", "lastName")
-                .andExpression("id").as("userId")
-                .andExpression("myBusinessCard.id").as("businessCardId")
-                .andExpression("myBusinessCard.company").as("company")
-                .andExpression("myBusinessCard.email").as("email")
-                .andExpression("myBusinessCard.phone").as("phone");
+                .andInclude("firstName", "lastName", "version")
+                .and("_id").as("userId")
+                .and("myBusinessCard._id").as("businessCardId")
+                .and("myBusinessCard.company").as("company")
+                .and("myBusinessCard.email").as("email")
+                .and("myBusinessCard.phone").as("phone");
         Aggregation aggregation = Aggregation.newAggregation(userMatch, businessCardProjection, unwindOperation, finalProjection);
-        return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(User.class), UnwoundUserBusinessCard.class).elementAt(0);
+        return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(User.class), UserBusinessCard.class).elementAt(0);
     }
 }

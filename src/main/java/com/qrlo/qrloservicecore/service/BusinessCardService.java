@@ -1,11 +1,10 @@
 package com.qrlo.qrloservicecore.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qrlo.qrloservicecore.model.BusinessCard;
-import com.qrlo.qrloservicecore.model.UnwoundUserBusinessCard;
+import com.qrlo.qrloservicecore.model.UserBusinessCard;
 import com.qrlo.qrloservicecore.repository.BusinessCardRepository;
 import com.qrlo.qrloservicecore.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -14,6 +13,7 @@ import reactor.core.publisher.Mono;
  * @author rostradamus <rolee0429@gmail.com>
  * @date 2021-05-06
  */
+@Slf4j
 @Service
 public class BusinessCardService {
     private final UserRepository userRepository;
@@ -33,7 +33,7 @@ public class BusinessCardService {
                 .thenReturn(businessCard);
     }
 
-    public Mono<UnwoundUserBusinessCard> getUnwoundBusinessCardForUserById(String businessCardId, String userId) {
+    public Mono<UserBusinessCard> getBusinessCardForUserById(String businessCardId, String userId) {
         return businessCardRepository.findUnwoundBusinessCardForUserById(userId, businessCardId);
     }
 }

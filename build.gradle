@@ -34,6 +34,7 @@ dependencies {
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.bouncycastle:bcprov-jdk15on:1.68'
+	implementation 'com.googlecode.ez-vcard:ez-vcard:0.11.2'
 }
 
 test {

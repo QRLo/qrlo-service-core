@@ -1,6 +1,7 @@
 package com.qrlo.qrloservicecore.service;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageConfig;
@@ -12,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author rostradamus <rolee0429@gmail.com>
@@ -19,8 +21,9 @@ import java.io.IOException;
  */
 @Service
 public class QrCodeService {
-    private static final int DEFAULT_WIDTH = 200;
-    private static final int DEFAULT_HEIGHT = 200;
+    private static final Map<EncodeHintType,?> DEFAULT_HINT = Map.of(EncodeHintType.CHARACTER_SET, "UTF-8");
+    private static final int DEFAULT_WIDTH = 300;
+    private static final int DEFAULT_HEIGHT = 300;
     private final MultiFormatWriter multiFormatWriter;
 
     public QrCodeService(MultiFormatWriter multiFormatWriter) {
@@ -35,7 +38,7 @@ public class QrCodeService {
         return Mono.create(sink -> {
             try {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                BitMatrix bitMatrix = multiFormatWriter.encode(content, BarcodeFormat.QR_CODE, 200, 200);
+                BitMatrix bitMatrix = multiFormatWriter.encode(content, BarcodeFormat.QR_CODE, width, height, DEFAULT_HINT);
                 MatrixToImageWriter.writeToStream(bitMatrix, MediaType.IMAGE_PNG.getSubtype(), baos, new MatrixToImageConfig());
                 sink.success(baos.toByteArray());
             } catch (IOException | WriterException e) {
