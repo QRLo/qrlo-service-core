@@ -1,5 +1,6 @@
 package com.qrlo.qrloservicecore.repository;
 
+import com.qrlo.qrloservicecore.model.BusinessCard;
 import com.qrlo.qrloservicecore.model.UserBusinessCard;
 import com.qrlo.qrloservicecore.model.User;
 import org.bson.Document;
@@ -42,9 +43,16 @@ public class CustomBusinessCardRepositoryImpl implements BusinessCardRepository 
                 .and("_id").as("userId")
                 .and("myBusinessCard._id").as("businessCardId")
                 .and("myBusinessCard.company").as("company")
+                .and("myBusinessCard.position").as("position")
                 .and("myBusinessCard.email").as("email")
                 .and("myBusinessCard.phone").as("phone");
         Aggregation aggregation = Aggregation.newAggregation(userMatch, businessCardProjection, unwindOperation, finalProjection);
         return mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(User.class), UserBusinessCard.class).elementAt(0);
+    }
+
+    @Override
+    public Mono<BusinessCard> verifyBusinessCardById(String businessCardId) {
+
+        return Mono.empty();
     }
 }

@@ -3,7 +3,7 @@ package com.qrlo.qrloservicecore.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.qrlo.qrloservicecore.model.Role;
+import com.qrlo.qrloservicecore.model.BusinessCard;
 import com.qrlo.qrloservicecore.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -39,6 +39,7 @@ public final class JwtTokenProvider {
     private final String keyAlias;
     private final String privateKeyPassword;
     private final String duration;
+    private final String serviceIssuer;
 
     private PrivateKey privateKey;
     private X509Certificate certificate;
@@ -49,12 +50,14 @@ public final class JwtTokenProvider {
             @Value("${qrlo.security.keystore.password}") String keyStorePassword,
             @Value("${qrlo.security.jwt.alias}") String keyAlias,
             @Value("${qrlo.security.jwt.sk.password}") String privateKeyPassword,
-            @Value("${qrlo.security.jwt.duration}") String duration) {
+            @Value("${qrlo.security.jwt.duration}") String duration,
+            @Value("${qrlo.security.jwt.issuer}") String serviceIssuer) {
         this.keyStoreFilePath = keyStoreFilePath;
         this.keyStorePassword = keyStorePassword;
         this.keyAlias = keyAlias;
         this.privateKeyPassword = privateKeyPassword;
         this.duration = duration;
+        this.serviceIssuer = serviceIssuer;
     }
 
     @PostConstruct
@@ -72,7 +75,7 @@ public final class JwtTokenProvider {
     public String generateToken(User user) {
         final Instant now = Instant.now();
         return JWT.create()
-                .withIssuer("qrlo-service-core")
+                .withIssuer("qrlo-service")
                 .withJWTId(UUID.randomUUID().toString())
                 .withSubject(user.getId())
                 .withIssuedAt(Date.from(now))
@@ -80,6 +83,34 @@ public final class JwtTokenProvider {
                 .withExpiresAt(Date.from(now.plus(Duration.parse(duration))))
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(signingAlgorithm);
+    }
+
+    public String generateVerificationToken(User user) {
+        final Instant now = Instant.now();
+        return JWT.create()
+                .withIssuer("qrlo-service")
+                .withJWTId(UUID.randomUUID().toString())
+                .withSubject(user.getId())
+                .withIssuedAt(Date.from(now))
+                .withNotBefore(Date.from(now))
+                .withExpiresAt(Date.from(now.plus(Duration.parse(duration))))
+                .sign(signingAlgorithm);
+    }
+
+    public String generateVerificationToken(BusinessCard businessCard) {
+        final Instant now = Instant.now();
+        return JWT.create()
+                .withIssuer("qrlo-service")
+                .withJWTId(UUID.randomUUID().toString())
+                .withSubject(businessCard.getId())
+                .withIssuedAt(Date.from(now))
+                .withNotBefore(Date.from(now))
+                .withExpiresAt(Date.from(now.plus(Duration.parse(duration))))
+                .sign(signingAlgorithm);
+    }
+
+    public String getSubjectFromToken(String token) {
+        return JWT.require(signingAlgorithm).build().verify(token).getSubject();
     }
 
     public Mono<String> generateTokenMono(User user) {

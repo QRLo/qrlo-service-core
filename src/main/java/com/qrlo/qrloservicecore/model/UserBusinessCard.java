@@ -14,5 +14,6 @@ public class UserBusinessCard {
     private String lastName;
     private String email;
     private String phone;
+    private String position;
     private String company;
 }
