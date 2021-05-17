@@ -33,7 +33,7 @@ public class BusinessCardService {
                 .thenReturn(businessCard);
     }
 
-    public Mono<UserBusinessCard> getBusinessCardForUserById(String businessCardId, String userId) {
+    public Mono<UserBusinessCard> getBusinessCardForUserById(String userId, String businessCardId) {
         return businessCardRepository.findUnwoundBusinessCardForUserById(userId, businessCardId);
     }
 }

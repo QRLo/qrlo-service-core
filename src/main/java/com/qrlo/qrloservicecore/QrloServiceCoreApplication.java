@@ -10,5 +10,4 @@ public class QrloServiceCoreApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(QrloServiceCoreApplication.class, args);
 	}
-
 }

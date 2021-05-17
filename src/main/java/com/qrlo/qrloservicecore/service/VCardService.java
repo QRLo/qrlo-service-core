@@ -4,6 +4,7 @@ import com.qrlo.qrloservicecore.model.UserBusinessCard;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.VCardVersion;
+import ezvcard.parameter.EmailType;
 import ezvcard.property.Organization;
 import ezvcard.property.StructuredName;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,11 +26,10 @@ public class VCardService {
         name.setFamily(userBusinessCard.getLastName());
         name.setGiven(userBusinessCard.getFirstName());
         vCard.setStructuredName(name);
-        vCard.addEmail(userBusinessCard.getEmail());
+        vCard.setOrganization(userBusinessCard.getCompany());
+        vCard.addTitle(userBusinessCard.getPosition());
+        vCard.addEmail(userBusinessCard.getEmail(), EmailType.WORK);
         vCard.addTelephoneNumber(userBusinessCard.getPhone());
-        Organization organization = new Organization();
-        organization.setGroup(userBusinessCard.getCompany());
-        vCard.addOrganization(organization);
         vCard.setExtendedProperty(businessCardUrlExtendedPropertyName,
                 String.format("/users/%s/businesscards/%s", userBusinessCard.getUserId(), userBusinessCard.getBusinessCardId()));
         return Mono.just(vCard);

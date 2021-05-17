@@ -21,6 +21,7 @@ public class AuthRouter {
                 .route(POST("/auth")
                         .and(accept(MediaType.APPLICATION_JSON)), authHandler::authenticate)
                 .andNest(path("/auth"), RouterFunctions
-                        .route(POST("/integrate"), authHandler::integrateOAuth));
+                        .route(POST("/integrate"), authHandler::integrateOAuth)
+                        .andRoute(GET("/verify/{token}"), authHandler::verifyActivationToken));
     }
 }

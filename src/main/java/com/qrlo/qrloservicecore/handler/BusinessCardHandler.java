@@ -1,12 +1,12 @@
 package com.qrlo.qrloservicecore.handler;
 
 import com.qrlo.qrloservicecore.model.BusinessCard;
+import com.qrlo.qrloservicecore.security.JwtTokenProvider;
 import com.qrlo.qrloservicecore.service.BusinessCardService;
 import com.qrlo.qrloservicecore.service.QrCodeService;
 import com.qrlo.qrloservicecore.util.RequestUtils;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -19,10 +19,17 @@ import reactor.core.publisher.Mono;
 public class BusinessCardHandler {
     private final BusinessCardService businessCardService;
     private final QrCodeService qrCodeService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public BusinessCardHandler(BusinessCardService businessCardService, QrCodeService qrCodeService) {
+    public BusinessCardHandler(BusinessCardService businessCardService, QrCodeService qrCodeService, JwtTokenProvider jwtTokenProvider) {
         this.businessCardService = businessCardService;
         this.qrCodeService = qrCodeService;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    public Mono<ServerResponse> verifyBusinessCard(ServerRequest request) {
+        String token = request.pathVariable("token");
+        return Mono.empty();
     }
 
     public Mono<ServerResponse> createBusinessCard(ServerRequest request) {

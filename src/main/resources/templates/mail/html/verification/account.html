@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Verification Email</title>
+</head>
+<body>
+<h1>Welcome, QRLo User!</h1>
+
+<p>
+    Please click the button below to activate your account.
+</p>
+<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%;">
+    <tr>
+        <td align="center" bgcolor="#19cca3" role="presentation" style="border:none;border-radius:6px;cursor:auto;padding:11px 20px;background:#19cca3;" valign="middle">
+            <a th:href="${verificationUrl}" style="background:#19cca3;color:#ffffff;font-family:Helvetica, sans-serif;font-size:18px;font-weight:600;line-height:120%;Margin:0;text-decoration:none;text-transform:none;" target="_blank">
+                Activate!
+            </a>
+        </td>
+    </tr>
+</table>
+<br/>
+Best,
+<br/>
+QRLo Developer
+</body>
+</html>

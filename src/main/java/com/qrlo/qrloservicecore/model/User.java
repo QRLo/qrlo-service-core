@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author rostradamus <rolee0429@gmail.com>
@@ -41,6 +40,7 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
     private List<BusinessCard> myBusinessCards = new ArrayList<>();
+    private boolean verified = false;
 
     private List<OAuth> oAuths;
     @CreatedDate
@@ -144,6 +144,6 @@ public class User implements UserDetails {
     @Override
     @JsonIgnore
     public boolean isEnabled() {
-        return true;
+        return verified;
     }
 }

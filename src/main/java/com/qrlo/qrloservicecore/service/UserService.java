@@ -28,6 +28,7 @@ public class UserService implements ReactiveUserDetailsService {
 
     public Mono<BusinessCard> addMyBusinessCard(String id, BusinessCard businessCard) {
         businessCard.setId(new ObjectId().toString());
+        businessCard.setEmailVerified(false);
         return userRepository
                 .findById(id)
                 .doOnNext(user -> user.getMyBusinessCards().add(businessCard))

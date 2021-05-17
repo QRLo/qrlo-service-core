@@ -57,10 +57,10 @@ public class ProfileHandler {
     }
 
     public Mono<ServerResponse> getMyBusinessCardQr(ServerRequest request) {
-        String id = request.pathVariable("id");
+        String businessCardId = request.pathVariable("id");
         return RequestUtils
                 .getUserIdFromRequest(request)
-                .flatMap(userId -> businessCardService.getBusinessCardForUserById(id, userId))
+                .flatMap(userId -> businessCardService.getBusinessCardForUserById(userId, businessCardId))
                 .flatMap(vCardService::generateFromUserBusinessCard)
                 .flatMap(vCardService::writeVCardAsString)
                 .flatMap(qrCodeService::generateQrCode)
