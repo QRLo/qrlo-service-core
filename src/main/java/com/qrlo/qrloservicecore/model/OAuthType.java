@@ -2,6 +2,7 @@ package com.qrlo.qrloservicecore.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.data.annotation.TypeAlias;
 
 import java.util.Map;
 

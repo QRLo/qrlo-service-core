@@ -75,9 +75,9 @@ public final class JwtTokenProvider {
     public String generateToken(User user) {
         final Instant now = Instant.now();
         return JWT.create()
-                .withIssuer("qrlo-service")
+                .withIssuer(serviceIssuer)
                 .withJWTId(UUID.randomUUID().toString())
-                .withSubject(user.getId())
+                .withSubject(user.getId().toString())
                 .withIssuedAt(Date.from(now))
                 .withNotBefore(Date.from(now))
                 .withExpiresAt(Date.from(now.plus(Duration.parse(duration))))
@@ -88,9 +88,9 @@ public final class JwtTokenProvider {
     public String generateVerificationToken(User user) {
         final Instant now = Instant.now();
         return JWT.create()
-                .withIssuer("qrlo-service")
+                .withIssuer(serviceIssuer)
                 .withJWTId(UUID.randomUUID().toString())
-                .withSubject(user.getId())
+                .withSubject(user.getId().toString())
                 .withIssuedAt(Date.from(now))
                 .withNotBefore(Date.from(now))
                 .withExpiresAt(Date.from(now.plus(Duration.parse(duration))))
@@ -100,17 +100,17 @@ public final class JwtTokenProvider {
     public String generateVerificationToken(BusinessCard businessCard) {
         final Instant now = Instant.now();
         return JWT.create()
-                .withIssuer("qrlo-service")
+                .withIssuer(serviceIssuer)
                 .withJWTId(UUID.randomUUID().toString())
-                .withSubject(businessCard.getId())
+                .withSubject(businessCard.getId().toString())
                 .withIssuedAt(Date.from(now))
                 .withNotBefore(Date.from(now))
                 .withExpiresAt(Date.from(now.plus(Duration.parse(duration))))
                 .sign(signingAlgorithm);
     }
 
-    public String getSubjectFromToken(String token) {
-        return JWT.require(signingAlgorithm).build().verify(token).getSubject();
+    public Mono<Integer> getSubjectFromToken(String token) {
+        return Mono.just(Integer.parseInt(JWT.require(signingAlgorithm).build().verify(token).getSubject()));
     }
 
     public Mono<String> generateTokenMono(User user) {

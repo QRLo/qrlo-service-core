@@ -7,9 +7,12 @@ import com.qrlo.qrloservicecore.model.OAuth;
 import com.qrlo.qrloservicecore.model.User;
 import com.qrlo.qrloservicecore.security.JwtTokenProvider;
 import com.qrlo.qrloservicecore.service.EmailService;
-import com.qrlo.qrloservicecore.service.KakaoService;
+import com.qrlo.qrloservicecore.service.OAuthService;
 import com.qrlo.qrloservicecore.service.UserService;
+import com.qrlo.qrloservicecore.service.client.KakaoClient;
+import com.qrlo.qrloservicecore.service.exception.OAuthIntegrationRequiredException;
 import com.qrlo.qrloservicecore.service.exception.OAuthVerificationException;
+import com.qrlo.qrloservicecore.service.exception.UnverifiedUserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author rostradamus <rolee0429@gmail.com>
@@ -30,37 +33,35 @@ import java.util.List;
 @Component
 public class AuthHandler {
     private final JwtTokenProvider jwtTokenProvider;
-    private final KakaoService kakaoService;
     private final UserService userService;
     private final EmailService emailService;
+    private final OAuthService oAuthService;
 
-    public AuthHandler(JwtTokenProvider jwtTokenProvider, KakaoService kakaoService, UserService userService, EmailService emailService) {
+    public AuthHandler(JwtTokenProvider jwtTokenProvider, UserService userService,
+                       EmailService emailService, OAuthService oAuthService) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.kakaoService = kakaoService;
         this.userService = userService;
         this.emailService = emailService;
+        this.oAuthService = oAuthService;
     }
 
     public Mono<ServerResponse> authenticate(ServerRequest request) {
         Mono<AuthRequest> authRequestMono = request
                 .bodyToMono(AuthRequest.class)
-                .cache()
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED))));
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED))))
+                .cache();
         return authRequestMono
-                .map(AuthRequest::getOAuthAccessToken)
-                .flatMap(kakaoService::verifyAccessToken)
-                .zipWith(authRequestMono, (kakaoAccessTokenInfoResponse, authRequest) ->
-                        new OAuth(authRequest.getOAuthType(), kakaoAccessTokenInfoResponse.getId().toString()))
-                .flatMap(userService::findByOAuth)
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND))))
-                .doOnNext(user -> {
-                    if (!user.isEnabled()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-                })
-                .flatMap(jwtTokenProvider::generateTokenMono)
+                .flatMap(authRequest -> oAuthService.verifyAccessToken(authRequest.getOAuthAccessToken()))
+                .zipWith(authRequestMono, (accessTokenInfoResponse, authRequest) ->
+                        oAuthService.findOAuthByConnectionId(authRequest.getOAuthType(), accessTokenInfoResponse.getId().toString()))
+                .flatMap(Function.identity())
+                .flatMap(oAuthService::generateAuthToken)
                 .map(AuthResponse::new)
                 .flatMap((authResponse) -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(Mono.just(authResponse), AuthResponse.class));
+                        .body(Mono.just(authResponse), AuthResponse.class))
+                .onErrorResume(UnverifiedUserException.class, e -> ServerResponse.status(HttpStatus.UNAUTHORIZED).build())
+                .onErrorResume(OAuthIntegrationRequiredException.class, e -> ServerResponse.status(HttpStatus.NOT_FOUND).build());
     }
 
     public Mono<ServerResponse> integrateOAuth(ServerRequest request) {
@@ -70,19 +71,17 @@ public class AuthHandler {
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST))));
         Mono<User> savedUser = oAuthIntegrationRequestMono
                 .map(OAuthIntegrationRequest::getOAuthAccessToken)
-                .flatMap(kakaoService::verifyAccessToken)
-                .zipWith(oAuthIntegrationRequestMono, (kakaoAccessTokenInfoResponse, oAuthIntegrationRequest) ->
-                        new OAuth(oAuthIntegrationRequest.getOAuthType(), kakaoAccessTokenInfoResponse.getId().toString()))
+                .flatMap(oAuthService::verifyAccessToken)
+                .zipWith(oAuthIntegrationRequestMono, (accessTokenInfoResponse, oAuthIntegrationRequest) ->
+                        new OAuth(oAuthIntegrationRequest.getOAuthType().name(), accessTokenInfoResponse.getId().toString()))
                 .zipWith(oAuthIntegrationRequestMono, (oAuth, oAuthIntegrationRequest) ->
-                        User.builder().email(oAuthIntegrationRequest.getEmail()).oAuths(List.of(oAuth)).build())
-                .flatMap(userService::saveUser)
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND))))
+                        oAuthService.doIntegrate(oAuthIntegrationRequest.getEmail(), oAuth))
+                .flatMap(Function.identity())
                 .cache();
-        savedUser
+        return savedUser
                 .flatMap(emailService::sendVerificationEmail)
                 .subscribeOn(Schedulers.boundedElastic())
-                .subscribe();
-        return savedUser
+                .then(savedUser)
                 .flatMap(jwtTokenProvider::generateTokenMono)
                 .map(AuthResponse::new)
                 .flatMap((authResponse) -> ServerResponse.ok()
@@ -93,10 +92,8 @@ public class AuthHandler {
     }
 
     public Mono<ServerResponse> verifyActivationToken(ServerRequest request) {
-        String token = request.pathVariable("token");
-        String userId = jwtTokenProvider.getSubjectFromToken(token);
-        return userService
-                .findById(userId)
+        return jwtTokenProvider.getSubjectFromToken(request.pathVariable("token"))
+                .flatMap(userService::findById)
                 .doOnNext(user -> user.setVerified(true))
                 .flatMap(userService::saveUser)
                 .then(ServerResponse.ok().contentType(MediaType.TEXT_HTML).render("verification/checked"));

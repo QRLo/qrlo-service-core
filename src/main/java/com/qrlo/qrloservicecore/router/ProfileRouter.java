@@ -21,7 +21,9 @@ public class ProfileRouter {
                 .route(GET("/profile"), profileHandler::getProfile)
                 .andRoute(PUT("/profile"), profileHandler::updateProfile)
                 .andNest(path("/profile"),
-                        RouterFunctions.route(POST("/mybusinesscards"), profileHandler::addMyBusinessCard)
+                        RouterFunctions
+                                .route(GET("/mybusinesscards"), profileHandler::getAllBusinessCards)
+                                .andRoute(POST("/mybusinesscards"), profileHandler::addMyBusinessCard)
                                 .andNest(path("/mybusinesscards"),
                                         RouterFunctions.route(GET("/{id}/generate-qr"), profileHandler::getMyBusinessCardQr)));
     }

@@ -8,8 +8,8 @@ import lombok.Data;
  */
 @Data
 public class UserBusinessCard {
-    private String userId;
-    private String businessCardId;
+    private Integer userId;
+    private Integer businessCardId;
     private String firstName;
     private String lastName;
     private String email;
