@@ -33,11 +33,9 @@ public class BusinessCardHandler {
     }
 
     public Mono<ServerResponse> createBusinessCard(ServerRequest request) {
-        Mono<String> userIdMono = RequestUtils
-                .getUserIdFromRequest(request).cache();
         return request
                 .bodyToMono(BusinessCard.class)
-                .zipWith(userIdMono, businessCardService::saveBusinessCardForUser)
+                .zipWith(RequestUtils.getUserIdFromRequest(request), businessCardService::saveBusinessCardForUser)
                 .flatMap(businessCardMono -> ServerResponse.ok().body(businessCardMono, BusinessCard.class));
     }
 

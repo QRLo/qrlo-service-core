@@ -2,7 +2,11 @@ package com.qrlo.qrloservicecore.repository;
 
 import com.qrlo.qrloservicecore.model.BusinessCard;
 import com.qrlo.qrloservicecore.model.UserBusinessCard;
+import org.springframework.data.r2dbc.repository.Query;
+import org.springframework.data.r2dbc.repository.R2dbcRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -10,8 +14,9 @@ import reactor.core.publisher.Mono;
  * @date 2021-05-10
  */
 @Repository
-public interface BusinessCardRepository {
-    Mono<UserBusinessCard> findUnwoundBusinessCardForUserById(String userId, String businessCardId);
+public interface BusinessCardRepository extends R2dbcRepository<BusinessCard, Integer> {
+    Flux<BusinessCard> findBusinessCardByUserId(Integer userId);
 
-    Mono<BusinessCard> verifyBusinessCardById(String businessCardId);
+    @Query("SELECT * FROM user_business_cards WHERE id = :id AND user_id = :user_id")
+    Mono<UserBusinessCard> findOneBusinessCardByIdAAndUserId(@Param("id") Integer id, @Param("user_id") Integer userId);
 }

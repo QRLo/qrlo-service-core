@@ -11,14 +11,13 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,7 +25,7 @@ import java.util.List;
  * @author rostradamus <rolee0429@gmail.com>
  * @date 2021-04-21
  */
-@Document
+@Table("users")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,21 +33,28 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User implements UserDetails {
     @Id
-    private String id;
-    @Indexed(unique = true)
+    private Integer id;
+    @Column("email")
     private String email;
+    @Column("first_name")
     private String firstName;
+    @Column("last_name")
     private String lastName;
-    private List<BusinessCard> myBusinessCards = new ArrayList<>();
+    @Column("verified")
     private boolean verified = false;
-
-    private List<OAuth> oAuths;
+    @Column("created_at")
     @CreatedDate
     private LocalDateTime createdAt;
+    @Column("updated_at")
     @LastModifiedDate
     private LocalDateTime updatedAt;
+    @Column("version")
     @Version
     private Long version;
+
+    public User(String email) {
+        this.email = email;
+    }
 
     @JsonProperty("missingProfile")
     public MissingProfile getMissingProfile() {

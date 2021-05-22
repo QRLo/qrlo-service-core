@@ -15,7 +15,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @JsonInclude
-public class KakaoAccessTokenInfoResponse {
+public class AccessTokenInfoResponse {
     @JsonProperty("id")
     private Long id;
     @JsonProperty("expires_in")

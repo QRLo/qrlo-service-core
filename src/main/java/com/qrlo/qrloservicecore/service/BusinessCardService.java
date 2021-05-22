@@ -3,10 +3,9 @@ package com.qrlo.qrloservicecore.service;
 import com.qrlo.qrloservicecore.model.BusinessCard;
 import com.qrlo.qrloservicecore.model.UserBusinessCard;
 import com.qrlo.qrloservicecore.repository.BusinessCardRepository;
-import com.qrlo.qrloservicecore.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -16,24 +15,22 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Service
 public class BusinessCardService {
-    private final UserRepository userRepository;
     private final BusinessCardRepository businessCardRepository;
 
-    public BusinessCardService(UserRepository userRepository, BusinessCardRepository businessCardRepository) {
-        this.userRepository = userRepository;
+    public BusinessCardService(BusinessCardRepository businessCardRepository) {
         this.businessCardRepository = businessCardRepository;
     }
 
-    public Mono<BusinessCard> saveBusinessCardForUser(BusinessCard businessCard, String userId) {
-        businessCard.setId(new ObjectId().toString());
-        return userRepository
-                .findById(userId)
-                .doOnNext(user -> user.getMyBusinessCards().add(businessCard))
-                .flatMap(userRepository::save)
-                .thenReturn(businessCard);
+    public Mono<BusinessCard> saveBusinessCardForUser(BusinessCard businessCard, Integer userId) {
+        businessCard.setUserId(userId);
+        return businessCardRepository.save(businessCard);
     }
 
-    public Mono<UserBusinessCard> getBusinessCardForUserById(String userId, String businessCardId) {
-        return businessCardRepository.findUnwoundBusinessCardForUserById(userId, businessCardId);
+    public Flux<BusinessCard> getAllBusinessCardsByUserId(Integer userId) {
+        return businessCardRepository.findBusinessCardByUserId(userId);
+    }
+
+    public Mono<UserBusinessCard> getBusinessCardForUserById(Integer id, Integer userId) {
+        return businessCardRepository.findOneBusinessCardByIdAAndUserId(id, userId);
     }
 }

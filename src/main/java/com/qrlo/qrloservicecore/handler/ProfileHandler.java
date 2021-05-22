@@ -1,6 +1,5 @@
 package com.qrlo.qrloservicecore.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qrlo.qrloservicecore.model.BusinessCard;
 import com.qrlo.qrloservicecore.model.User;
 import com.qrlo.qrloservicecore.service.BusinessCardService;
@@ -9,10 +8,13 @@ import com.qrlo.qrloservicecore.service.UserService;
 import com.qrlo.qrloservicecore.service.VCardService;
 import com.qrlo.qrloservicecore.util.RequestUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -52,15 +54,25 @@ public class ProfileHandler {
         return request
                 .bodyToMono(BusinessCard.class)
                 .zipWith(RequestUtils.getUserIdFromRequest(request))
-                .flatMap(t -> userService.addMyBusinessCard(t.getT2(), t.getT1()))
+                .flatMap(t -> businessCardService.saveBusinessCardForUser(t.getT1(), t.getT2()))
                 .flatMap(businessCard -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(businessCard));
     }
 
+    public Mono<ServerResponse> getAllBusinessCards(ServerRequest request) {
+        return RequestUtils.getUserIdFromRequest(request)
+                .flatMapMany(businessCardService::getAllBusinessCardsByUserId)
+                .collectList()
+                .flatMap(businessCards -> ServerResponse.ok().bodyValue(businessCards));
+    }
+
     public Mono<ServerResponse> getMyBusinessCardQr(ServerRequest request) {
-        String businessCardId = request.pathVariable("id");
+        int businessCardId = Integer.parseInt(request.pathVariable("id"));
         return RequestUtils
                 .getUserIdFromRequest(request)
-                .flatMap(userId -> businessCardService.getBusinessCardForUserById(userId, businessCardId))
+                .flatMap(userId -> businessCardService
+                        .getBusinessCardForUserById(businessCardId, userId))
+                .switchIfEmpty(Mono.defer(() ->
+                        Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Business card for user is not found"))))
                 .flatMap(vCardService::generateFromUserBusinessCard)
                 .flatMap(vCardService::writeVCardAsString)
                 .flatMap(qrCodeService::generateQrCode)

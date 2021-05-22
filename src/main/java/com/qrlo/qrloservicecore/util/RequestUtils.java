@@ -15,11 +15,11 @@ public final class RequestUtils {
          */
     }
 
-    public static Mono<String> getUserIdFromRequest(ServerRequest request) {
+    public static Mono<Integer> getUserIdFromRequest(ServerRequest request) {
         return request
                 .principal()
                 .ofType(UsernamePasswordAuthenticationToken.class)
                 .map(UsernamePasswordAuthenticationToken::getPrincipal)
-                .ofType(String.class);
+                .map(userId -> Integer.parseInt((String) userId));
     }
 }
