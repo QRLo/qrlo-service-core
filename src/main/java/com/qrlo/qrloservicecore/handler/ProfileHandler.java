@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -53,9 +52,8 @@ public class ProfileHandler {
     public Mono<ServerResponse> addMyBusinessCard(ServerRequest request) {
         return request
                 .bodyToMono(BusinessCard.class)
-                .zipWith(RequestUtils.getUserIdFromRequest(request))
-                .flatMap(t -> businessCardService.saveBusinessCardForUser(t.getT1(), t.getT2()))
-                .flatMap(businessCard -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(businessCard));
+                .zipWith(RequestUtils.getUserIdFromRequest(request), businessCardService::saveBusinessCardForUser)
+                .flatMap(businessCardMono -> ServerResponse.ok().body(businessCardMono, BusinessCard.class));
     }
 
     public Mono<ServerResponse> getAllBusinessCards(ServerRequest request) {

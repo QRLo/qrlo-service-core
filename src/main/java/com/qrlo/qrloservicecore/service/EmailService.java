@@ -2,8 +2,9 @@ package com.qrlo.qrloservicecore.service;
 
 import com.qrlo.qrloservicecore.model.BusinessCard;
 import com.qrlo.qrloservicecore.model.User;
-import com.qrlo.qrloservicecore.security.JwtTokenProvider;
+import com.qrlo.qrloservicecore.config.security.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ public class EmailService {
     private final JavaMailSender javaMailSender;
     private final JwtTokenProvider jwtTokenProvider;
     private final TemplateEngine emailTemplateEngine;
+    @Value("${spring.mail.username}")
+    private String sender;
 
     public EmailService(JavaMailSender javaMailSender, JwtTokenProvider jwtTokenProvider, TemplateEngine emailTemplateEngine) {
         this.javaMailSender = javaMailSender;
@@ -61,7 +64,7 @@ public class EmailService {
             try {
                 final MimeMessage mimeMailMessage = javaMailSender.createMimeMessage();
                 final MimeMessageHelper message = new MimeMessageHelper(mimeMailMessage, true, "UTF-8");
-                message.setFrom("qrlo.developer@gmail.com");
+                message.setFrom(sender);
                 message.setTo(businessCard.getEmail());
                 message.setSubject("Your QRLo Business Card Verification");
                 String token = jwtTokenProvider.generateVerificationToken(businessCard);

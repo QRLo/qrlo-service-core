@@ -1,7 +1,7 @@
 package com.qrlo.qrloservicecore.handler;
 
 import com.qrlo.qrloservicecore.model.BusinessCard;
-import com.qrlo.qrloservicecore.security.JwtTokenProvider;
+import com.qrlo.qrloservicecore.config.security.JwtTokenProvider;
 import com.qrlo.qrloservicecore.service.BusinessCardService;
 import com.qrlo.qrloservicecore.service.QrCodeService;
 import com.qrlo.qrloservicecore.util.RequestUtils;
