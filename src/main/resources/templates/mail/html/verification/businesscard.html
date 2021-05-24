@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+<h1>[큐알로] 비즈니스 명함 이메일 계정 연동 인증</h1>
+
+<p>
+    안녕하세요, <span th:text="${userLastName}"/><span th:text="${userFirstName}"/>님.
+    큐알로 입니다.
+
+    비즈니스 정보 이메일 인증을 완료하시려면 하단 버튼을 눌러주세요!
+    인증절차는 선택사항이며 인증을 하시지 않아도 정상적으로 서비스를 이용하실 수 있습니다.
+</p>
+<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%;">
+    <tr>
+        <td align="center" bgcolor="#19cca3" role="presentation" style="border:none;border-radius:6px;cursor:auto;padding:11px 20px;background:#19cca3;" valign="middle">
+            <a th:href="${verificationUrl}" style="background:#19cca3;color:#ffffff;font-family:Helvetica, sans-serif;font-size:18px;font-weight:600;line-height:120%;Margin:0;text-decoration:none;text-transform:none;" target="_blank">
+                인증하기
+            </a>
+        </td>
+    </tr>
+</table>
+<br/>
+감사합니다.
+<br/>
+큐알로 드림.
+</body>
+</html>

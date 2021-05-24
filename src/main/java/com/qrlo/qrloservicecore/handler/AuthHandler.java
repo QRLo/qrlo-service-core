@@ -5,11 +5,10 @@ import com.qrlo.qrloservicecore.handler.domain.AuthResponse;
 import com.qrlo.qrloservicecore.handler.domain.OAuthIntegrationRequest;
 import com.qrlo.qrloservicecore.model.OAuth;
 import com.qrlo.qrloservicecore.model.User;
-import com.qrlo.qrloservicecore.security.JwtTokenProvider;
+import com.qrlo.qrloservicecore.config.security.JwtTokenProvider;
 import com.qrlo.qrloservicecore.service.EmailService;
 import com.qrlo.qrloservicecore.service.OAuthService;
 import com.qrlo.qrloservicecore.service.UserService;
-import com.qrlo.qrloservicecore.service.client.KakaoClient;
 import com.qrlo.qrloservicecore.service.exception.OAuthIntegrationRequiredException;
 import com.qrlo.qrloservicecore.service.exception.OAuthVerificationException;
 import com.qrlo.qrloservicecore.service.exception.UnverifiedUserException;
@@ -79,7 +78,7 @@ public class AuthHandler {
                 .flatMap(Function.identity())
                 .cache();
         return savedUser
-                .flatMap(emailService::sendVerificationEmail)
+                .flatMap(emailService::sendAccountVerificationEmail)
                 .subscribeOn(Schedulers.boundedElastic())
                 .then(savedUser)
                 .flatMap(jwtTokenProvider::generateTokenMono)

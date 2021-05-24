@@ -16,6 +16,6 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 public class HealthRouter {
     @Bean
     public RouterFunction<ServerResponse> healthRoutes(HealthHandler healthHandler) {
-        return RouterFunctions.route(GET("health"), healthHandler::healthCheck);
+        return RouterFunctions.route(GET("/health"), healthHandler::healthCheck);
     }
 }

@@ -1,4 +1,4 @@
-package com.qrlo.qrloservicecore.security;
+package com.qrlo.qrloservicecore.config.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

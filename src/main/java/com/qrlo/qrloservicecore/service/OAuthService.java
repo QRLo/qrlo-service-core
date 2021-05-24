@@ -1,11 +1,11 @@
 package com.qrlo.qrloservicecore.service;
 
+import com.qrlo.qrloservicecore.config.security.JwtTokenProvider;
 import com.qrlo.qrloservicecore.model.OAuth;
 import com.qrlo.qrloservicecore.model.OAuthType;
 import com.qrlo.qrloservicecore.model.User;
 import com.qrlo.qrloservicecore.repository.OAuthRepository;
 import com.qrlo.qrloservicecore.repository.UserRepository;
-import com.qrlo.qrloservicecore.security.JwtTokenProvider;
 import com.qrlo.qrloservicecore.service.client.KakaoClient;
 import com.qrlo.qrloservicecore.service.domain.AccessTokenInfoResponse;
 import com.qrlo.qrloservicecore.service.exception.OAuthIntegrationRequiredException;

@@ -21,7 +21,16 @@ public class BusinessCardService {
         this.businessCardRepository = businessCardRepository;
     }
 
+    public Mono<BusinessCard> findById(Integer id) {
+        return businessCardRepository.findById(id);
+    }
+
+    public Mono<BusinessCard> saveBusinessCard(BusinessCard businessCard) {
+        return businessCardRepository.save(businessCard);
+    }
+
     public Mono<BusinessCard> saveBusinessCardForUser(BusinessCard businessCard, Integer userId) {
+        log.info("BusinessCard: {}, UserId: {}", businessCard.getId(), userId);
         businessCard.setUserId(userId);
         return businessCardRepository.save(businessCard);
     }
