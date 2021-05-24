@@ -34,16 +34,16 @@ public class EmailService {
         this.emailTemplateEngine = emailTemplateEngine;
     }
 
-    public Mono<Boolean> sendVerificationEmail(User user) {
+    public Mono<Boolean> sendAccountVerificationEmail(User user) {
         return Mono.fromCallable(() -> {
             try {
                 final MimeMessage mimeMailMessage = javaMailSender.createMimeMessage();
                 final MimeMessageHelper message = new MimeMessageHelper(mimeMailMessage, true, "UTF-8");
                 message.setFrom("qrlo.developer@gmail.com");
                 message.setTo(user.getEmail());
-                message.setSubject("Your QRLo Account Verification");
+                message.setSubject("[큐알로] 이메일 계정 연동 인증");
                 String token = jwtTokenProvider.generateVerificationToken(user);
-                String verificationUrl = "http://192.168.2.10:3000/api/v1/auth/verify/" + token;
+                String verificationUrl = "http://192.168.2.10:3000/api/v1/verification/accounts/" + token;
 
                 final Context context = new Context();
                 context.setVariable("verificationUrl", verificationUrl);
@@ -59,18 +59,21 @@ public class EmailService {
         });
     }
 
-    public Mono<Void> sendEmailVerification(BusinessCard businessCard) {
+    public Mono<Void> sendBusinessCardVerificationEmail(User user, BusinessCard businessCard) {
         return Mono.fromCallable(() -> {
             try {
+                log.info("Sending email for verification to User: {} for Business Card: {}", user.toString(), businessCard.toString());
                 final MimeMessage mimeMailMessage = javaMailSender.createMimeMessage();
                 final MimeMessageHelper message = new MimeMessageHelper(mimeMailMessage, true, "UTF-8");
                 message.setFrom(sender);
                 message.setTo(businessCard.getEmail());
-                message.setSubject("Your QRLo Business Card Verification");
+                message.setSubject("[큐알로] 비즈니스 명함 이메일 계정 연동 인증");
                 String token = jwtTokenProvider.generateVerificationToken(businessCard);
-                String verificationUrl = "http://192.168.2.10:3000/api/v1/businesscard/verify" + token;
+                String verificationUrl = "http://192.168.2.10:3000/api/v1/verification/businesscards/" + token;
 
                 final Context context = new Context();
+                context.setVariable("userLastName", user.getLastName());
+                context.setVariable("userFirstName", user.getFirstName());
                 context.setVariable("verificationUrl", verificationUrl);
 
                 String htmlContent = emailTemplateEngine.process("html/verification/businesscard", context);

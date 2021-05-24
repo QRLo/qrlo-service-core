@@ -1,5 +1,7 @@
-package com.qrlo.qrloservicecore.config.security;
+package com.qrlo.qrloservicecore.config;
 
+import com.qrlo.qrloservicecore.config.security.JwtAuthenticationFilter;
+import com.qrlo.qrloservicecore.config.security.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -42,7 +44,7 @@ public class SecurityConfig {
                     .pathMatchers(HttpMethod.OPTIONS).permitAll()
                     .pathMatchers("/auth/**").permitAll()
                     .pathMatchers("/health").permitAll()
-                .pathMatchers("/businesscards/**").permitAll()
+                    .pathMatchers("/verification/**").permitAll()
                     .anyExchange().authenticated().and()
                 .addFilterAt(new JwtAuthenticationFilter(tokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
                 .build();

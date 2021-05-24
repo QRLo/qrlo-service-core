@@ -2,10 +2,7 @@ package com.qrlo.qrloservicecore.handler;
 
 import com.qrlo.qrloservicecore.model.BusinessCard;
 import com.qrlo.qrloservicecore.model.User;
-import com.qrlo.qrloservicecore.service.BusinessCardService;
-import com.qrlo.qrloservicecore.service.QrCodeService;
-import com.qrlo.qrloservicecore.service.UserService;
-import com.qrlo.qrloservicecore.service.VCardService;
+import com.qrlo.qrloservicecore.service.*;
 import com.qrlo.qrloservicecore.util.RequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,6 +12,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 /**
  * @author rostradamus <rolee0429@gmail.com>
@@ -27,13 +25,15 @@ public class ProfileHandler {
     private final BusinessCardService businessCardService;
     private final QrCodeService qrCodeService;
     private final VCardService vCardService;
+    private final EmailService emailService;
 
     public ProfileHandler(UserService userService, BusinessCardService businessCardService, QrCodeService qrCodeService,
-                          VCardService vCardService) {
+                          VCardService vCardService, EmailService emailService) {
         this.userService = userService;
         this.businessCardService = businessCardService;
         this.qrCodeService = qrCodeService;
         this.vCardService = vCardService;
+        this.emailService = emailService;
     }
 
     public Mono<ServerResponse> getProfile(ServerRequest request) {
@@ -50,10 +50,19 @@ public class ProfileHandler {
     }
 
     public Mono<ServerResponse> addMyBusinessCard(ServerRequest request) {
-        return request
+        Mono<Integer> userIdMono = RequestUtils.getUserIdFromRequest(request).cache();
+        Mono<BusinessCard> createdBusinessCardMono = request
                 .bodyToMono(BusinessCard.class)
-                .zipWith(RequestUtils.getUserIdFromRequest(request), businessCardService::saveBusinessCardForUser)
-                .flatMap(businessCardMono -> ServerResponse.ok().body(businessCardMono, BusinessCard.class));
+                .zipWith(userIdMono)
+                .flatMap(t -> businessCardService.saveBusinessCardForUser(t.getT1(), t.getT2()))
+                .cache();
+        return userIdMono
+                .flatMap(userService::findById)
+                .zipWith(createdBusinessCardMono)
+                .doOnNext(t -> emailService.sendBusinessCardVerificationEmail(t.getT1(), t.getT2()).subscribe())
+                .doOnNext(businessCard -> log.info("Sending created business card: {}", businessCard.toString()))
+                .then(createdBusinessCardMono)
+                .flatMap(createdBusinessCard -> ServerResponse.ok().bodyValue(createdBusinessCard));
     }
 
     public Mono<ServerResponse> getAllBusinessCards(ServerRequest request) {

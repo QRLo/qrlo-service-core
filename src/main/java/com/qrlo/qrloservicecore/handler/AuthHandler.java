@@ -78,7 +78,7 @@ public class AuthHandler {
                 .flatMap(Function.identity())
                 .cache();
         return savedUser
-                .flatMap(emailService::sendVerificationEmail)
+                .flatMap(emailService::sendAccountVerificationEmail)
                 .subscribeOn(Schedulers.boundedElastic())
                 .then(savedUser)
                 .flatMap(jwtTokenProvider::generateTokenMono)
