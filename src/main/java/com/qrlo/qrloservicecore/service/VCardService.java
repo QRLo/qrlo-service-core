@@ -5,7 +5,6 @@ import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.VCardVersion;
 import ezvcard.parameter.EmailType;
-import ezvcard.property.Organization;
 import ezvcard.property.StructuredName;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,8 +16,11 @@ import reactor.core.publisher.Mono;
  */
 @Service
 public class VCardService {
-    @Value("${qrlo.vcard.businesscard.uri.property-name}")
-    private String businessCardUrlExtendedPropertyName;
+    @Value("${qrlo.vcard.businesscard.id.property-name}")
+    private String businessCardIdPropertyName;
+    @Value("${qrlo.vcard.businesscard.userId.property-name}")
+    private String businessCardUserIdPropertyName;
+
 
     public Mono<VCard> generateFromUserBusinessCard(UserBusinessCard userBusinessCard) {
         VCard vCard = new VCard();
@@ -30,8 +32,8 @@ public class VCardService {
         vCard.addTitle(userBusinessCard.getPosition());
         vCard.addEmail(userBusinessCard.getEmail(), EmailType.WORK);
         vCard.addTelephoneNumber(userBusinessCard.getPhone());
-        vCard.setExtendedProperty(businessCardUrlExtendedPropertyName,
-                String.format("/users/%s/businesscards/%s", userBusinessCard.getUserId(), userBusinessCard.getBusinessCardId()));
+        vCard.setExtendedProperty(businessCardIdPropertyName, userBusinessCard.getId().toString());
+        vCard.setExtendedProperty(businessCardUserIdPropertyName, userBusinessCard.getUserId().toString());
         return Mono.just(vCard);
     }
 
