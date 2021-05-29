@@ -19,9 +19,8 @@ public class UserHandler {
     }
 
     public Mono<ServerResponse> getBusinessCard(ServerRequest request) {
-        int userId = Integer.parseInt(request.pathVariable("userId"));
         int businessCardId = Integer.parseInt(request.pathVariable("businessCardId"));
-        return businessCardService.getBusinessCardForUserById(businessCardId, userId)
+        return businessCardService.getBusinessCardForUserById(businessCardId)
                 .flatMap(userBusinessCard -> ServerResponse.ok().bodyValue(userBusinessCard));
     }
 }

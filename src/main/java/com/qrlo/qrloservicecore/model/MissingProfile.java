@@ -1,6 +1,5 @@
 package com.qrlo.qrloservicecore.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -13,9 +12,4 @@ import java.util.List;
 @Data
 public class MissingProfile {
     private List<String> fields = new ArrayList<>();
-
-    @JsonIgnore
-    public boolean isEmpty() {
-        return fields.isEmpty();
-    }
 }

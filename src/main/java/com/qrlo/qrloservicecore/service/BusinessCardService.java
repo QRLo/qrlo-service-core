@@ -39,7 +39,7 @@ public class BusinessCardService {
         return businessCardRepository.findBusinessCardByUserId(userId);
     }
 
-    public Mono<UserBusinessCard> getBusinessCardForUserById(Integer id, Integer userId) {
-        return businessCardRepository.findOneBusinessCardByIdAAndUserId(id, userId);
+    public Mono<UserBusinessCard> getBusinessCardForUserById(Integer id) {
+        return businessCardRepository.findOneBusinessCardById(id);
     }
 }

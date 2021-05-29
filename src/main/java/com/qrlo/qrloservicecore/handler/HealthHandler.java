@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 public class HealthHandler {
     public Mono<ServerResponse> healthCheck(ServerRequest request) {
         return RequestUtils
-                .getUserIdFromRequest(request)
+                .getUserIdFromRequestPrincipal(request)
                 .map(id -> new HealthCheckResponse(HealthStatus.UP, id != null))
                 .flatMap(healthCheckResponse -> ServerResponse.ok().bodyValue(healthCheckResponse));
     }

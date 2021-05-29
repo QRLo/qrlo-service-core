@@ -8,7 +8,6 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
-import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 
 /**
  * @author rostradamus <rolee0429@gmail.com>
@@ -19,7 +18,6 @@ public class BusinessCardRouter {
     @Bean
     public static RouterFunction<ServerResponse> businessCardRoutes(BusinessCardHandler businessCardHandler) {
         return RouterFunctions
-                .route(POST("/businesscards"), businessCardHandler::createBusinessCard)
-                .andRoute(GET("/businesscards/generate"), businessCardHandler::generateQrCode);
+                .route(GET("/businesscards/{id}"), businessCardHandler::getBusinessCardById);
     }
 }

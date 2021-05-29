@@ -32,8 +32,4 @@ public class OAuth {
         this.oAuthType = oAuthType;
         this.connectionId = connectionId;
     }
-
-    public OAuthType getOAuthType() {
-        return OAuthType.getByValue(oAuthType);
-    }
 }

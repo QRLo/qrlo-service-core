@@ -18,29 +18,14 @@ import reactor.core.publisher.Mono;
 @Component
 public class BusinessCardHandler {
     private final BusinessCardService businessCardService;
-    private final QrCodeService qrCodeService;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public BusinessCardHandler(BusinessCardService businessCardService, QrCodeService qrCodeService, JwtTokenProvider jwtTokenProvider) {
+    public BusinessCardHandler(BusinessCardService businessCardService) {
         this.businessCardService = businessCardService;
-        this.qrCodeService = qrCodeService;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public Mono<ServerResponse> verifyBusinessCard(ServerRequest request) {
-        String token = request.pathVariable("token");
-        return Mono.empty();
-    }
-
-    public Mono<ServerResponse> createBusinessCard(ServerRequest request) {
-        return request
-                .bodyToMono(BusinessCard.class)
-                .zipWith(RequestUtils.getUserIdFromRequest(request), businessCardService::saveBusinessCardForUser)
-                .flatMap(businessCardMono -> ServerResponse.ok().body(businessCardMono, BusinessCard.class));
-    }
-
-    public Mono<ServerResponse> generateQrCode(ServerRequest request) {
-        return qrCodeService.generateQrCode("Test")
-                .flatMap(bytes -> ServerResponse.ok().contentType(MediaType.IMAGE_PNG).bodyValue(bytes));
+    public Mono<ServerResponse> getBusinessCardById(ServerRequest request) {
+        int id = Integer.parseInt(request.pathVariable("id"));
+        return businessCardService.getBusinessCardForUserById(id)
+                .flatMap(userBusinessCard -> ServerResponse.ok().bodyValue(userBusinessCard));
     }
 }
