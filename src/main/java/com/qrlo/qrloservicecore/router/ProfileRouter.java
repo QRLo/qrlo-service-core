@@ -33,6 +33,8 @@ public class ProfileRouter {
     public RouterFunction<ServerResponse> profileContactRoutes(ProfileContactHandler profileContactHandler) {
         return RouterFunctions
                 .nest(path("/profile"),
-                        RouterFunctions.route(POST("/contacts"), profileContactHandler::addContact));
+                        RouterFunctions
+                                .route(GET("/contacts"), profileContactHandler::getAllContacts)
+                                .andRoute(POST("/contacts"), profileContactHandler::addContact));
     }
 }
