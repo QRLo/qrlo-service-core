@@ -6,5 +6,6 @@ SELECT b.id AS id,
        b.email AS email,
        b.phone AS phone,
        b.position AS position,
-       b.company AS company
+       b.company AS company,
+       b.email_verified AS email_verified
 FROM users AS u INNER JOIN (SELECT * FROM business_cards) AS b ON u.id = b.user_id;

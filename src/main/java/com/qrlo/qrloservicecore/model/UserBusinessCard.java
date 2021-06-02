@@ -26,4 +26,6 @@ public class UserBusinessCard {
     private String position;
     @Column("company")
     private String company;
+    @Column("email_verified")
+    private Boolean emailVerified;
 }

@@ -1,6 +1,7 @@
 package com.qrlo.qrloservicecore.router;
 
 import com.qrlo.qrloservicecore.handler.ProfileHandler;
+import com.qrlo.qrloservicecore.handler.profile.ProfileContactHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -21,13 +22,17 @@ public class ProfileRouter {
                 .route(GET("/profile"), profileHandler::getProfile)
                 .andRoute(PUT("/profile"), profileHandler::updateProfile)
                 .andNest(path("/profile"),
-                        RouterFunctions.route(POST("/contacts"),profileHandler::addContact))
-                .andNest(path("/profile"),
                         RouterFunctions
-                                .route(GET("/mybusinesscards"), profileHandler::getAllBusinessCards)
-                                .andRoute(POST("/mybusinesscards"), profileHandler::addMyBusinessCard)
-                                .andNest(path("/mybusinesscards"),
+                                .route(GET("/businesscards"), profileHandler::getAllBusinessCards)
+                                .andRoute(POST("/businesscards"), profileHandler::addMyBusinessCard)
+                                .andNest(path("/businesscards"),
                                         RouterFunctions.route(GET("/{id}/generate-qr"), profileHandler::getMyBusinessCardQr)));
+    }
 
+    @Bean
+    public RouterFunction<ServerResponse> profileContactRoutes(ProfileContactHandler profileContactHandler) {
+        return RouterFunctions
+                .nest(path("/profile"),
+                        RouterFunctions.route(POST("/contacts"), profileContactHandler::addContact));
     }
 }

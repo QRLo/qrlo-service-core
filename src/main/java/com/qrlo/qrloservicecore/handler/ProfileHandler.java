@@ -64,10 +64,6 @@ public class ProfileHandler {
                 .flatMap(createdBusinessCard -> ServerResponse.ok().bodyValue(createdBusinessCard));
     }
 
-    public Mono<ServerResponse> addContact(ServerRequest request) {
-        return ServerResponse.ok().build();
-    }
-
     public Mono<ServerResponse> getAllBusinessCards(ServerRequest request) {
         return RequestUtils.getUserIdFromRequestPrincipal(request)
                 .flatMapMany(businessCardService::getAllBusinessCardsByUserId)
