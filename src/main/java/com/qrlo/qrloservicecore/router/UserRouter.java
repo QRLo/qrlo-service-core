@@ -1,6 +1,6 @@
 package com.qrlo.qrloservicecore.router;
 
-import com.qrlo.qrloservicecore.handler.BusinessCardHandler;
+import com.qrlo.qrloservicecore.handler.UserHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -11,13 +11,13 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 
 /**
  * @author rostradamus <rolee0429@gmail.com>
- * @date 2021-05-06
+ * @date 2021-05-28
  */
 @Configuration
-public class BusinessCardRouter {
+public class UserRouter {
     @Bean
-    public static RouterFunction<ServerResponse> businessCardRoutes(BusinessCardHandler businessCardHandler) {
+    public static RouterFunction<ServerResponse> userRoutes(UserHandler userHandler) {
         return RouterFunctions
-                .route(GET("/businesscards/{id}"), businessCardHandler::getBusinessCardById);
+                .route(GET("/users/{userId}/businesscards/{businessCardId}"), userHandler::getBusinessCard);
     }
 }

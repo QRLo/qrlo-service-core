@@ -17,6 +17,6 @@ import reactor.core.publisher.Mono;
 public interface BusinessCardRepository extends R2dbcRepository<BusinessCard, Integer> {
     Flux<BusinessCard> findBusinessCardByUserId(Integer userId);
 
-    @Query("SELECT * FROM user_business_cards WHERE id = :id AND user_id = :user_id")
-    Mono<UserBusinessCard> findOneBusinessCardByIdAAndUserId(@Param("id") Integer id, @Param("user_id") Integer userId);
+    @Query("SELECT * FROM user_business_cards WHERE id = :id")
+    Mono<UserBusinessCard> findOneBusinessCardById(@Param("id") Integer id);
 }

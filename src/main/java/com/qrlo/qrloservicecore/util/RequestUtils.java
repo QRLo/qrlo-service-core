@@ -15,7 +15,7 @@ public final class RequestUtils {
          */
     }
 
-    public static Mono<Integer> getUserIdFromRequest(ServerRequest request) {
+    public static Mono<Integer> getUserIdFromRequestPrincipal(ServerRequest request) {
         return request
                 .principal()
                 .ofType(UsernamePasswordAuthenticationToken.class)

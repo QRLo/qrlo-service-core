@@ -12,7 +12,6 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 /**
  * @author rostradamus <rolee0429@gmail.com>
@@ -37,7 +36,7 @@ public class ProfileHandler {
     }
 
     public Mono<ServerResponse> getProfile(ServerRequest request) {
-        return RequestUtils.getUserIdFromRequest(request)
+        return RequestUtils.getUserIdFromRequestPrincipal(request)
                 .flatMap(userService::findById)
                 .flatMap(user -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(user));
     }
@@ -50,7 +49,7 @@ public class ProfileHandler {
     }
 
     public Mono<ServerResponse> addMyBusinessCard(ServerRequest request) {
-        Mono<Integer> userIdMono = RequestUtils.getUserIdFromRequest(request).cache();
+        Mono<Integer> userIdMono = RequestUtils.getUserIdFromRequestPrincipal(request).cache();
         Mono<BusinessCard> createdBusinessCardMono = request
                 .bodyToMono(BusinessCard.class)
                 .zipWith(userIdMono)
@@ -66,7 +65,7 @@ public class ProfileHandler {
     }
 
     public Mono<ServerResponse> getAllBusinessCards(ServerRequest request) {
-        return RequestUtils.getUserIdFromRequest(request)
+        return RequestUtils.getUserIdFromRequestPrincipal(request)
                 .flatMapMany(businessCardService::getAllBusinessCardsByUserId)
                 .collectList()
                 .flatMap(businessCards -> ServerResponse.ok().bodyValue(businessCards));
@@ -75,9 +74,8 @@ public class ProfileHandler {
     public Mono<ServerResponse> getMyBusinessCardQr(ServerRequest request) {
         int businessCardId = Integer.parseInt(request.pathVariable("id"));
         return RequestUtils
-                .getUserIdFromRequest(request)
-                .flatMap(userId -> businessCardService
-                        .getBusinessCardForUserById(businessCardId, userId))
+                .getUserIdFromRequestPrincipal(request)
+                .then(businessCardService.getBusinessCardForUserById(businessCardId))
                 .switchIfEmpty(Mono.defer(() ->
                         Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Business card for user is not found"))))
                 .flatMap(vCardService::generateFromUserBusinessCard)
